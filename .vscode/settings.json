@@ -2,11 +2,7 @@
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
     "eslint.format.enable": true,
-    "prettier.requireConfig": true,
-    "prettier.configPath": ".prettierrc",
-    "prettier.resolveGlobalModules": false,
-    "prettier.singleQuote": true,
-    "prettier.insertPragma": false,
+    "editor.defaultFormatter": "trunk.io",
     "eslint.lintTask.enable": true,
     "editor.tabSize": 2,
     "editor.formatOnSaveMode": "file",
@@ -17,5 +13,8 @@
     "eslint.codeActionsOnSave.mode": "all",
     "eslint.codeActionsOnSave.rules": [
         "source.organizeImports"
-    ]
+    ],
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
 }
