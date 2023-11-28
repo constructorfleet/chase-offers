@@ -34,12 +34,15 @@ export class Selector<ReplacerText extends string = undefined> {
     return this;
   }
 
-  async exec(
+  async exec<T = WebElement>(
     driver: WebDriver,
-    action: (element: WebElement) => Promise<void> = async (
+    action: (element: WebElement) => Promise<T> = async (
       element: WebElement
-    ) => element.click()
-  ): Promise<WebElement | null> {
+    ) => {
+      await element.click();
+      return element as T;
+    }
+  ): Promise<T | null> {
     if (this.options.templateReplacer && !this.textReplacement) {
       throw new Error("Must provide text replacement for selector");
     }
@@ -53,8 +56,8 @@ export class Selector<ReplacerText extends string = undefined> {
     try {
       await this.switchFrame(driver);
       const element = await this.getElement(driver, selector);
-      await action(element);
-      return element;
+      return await action(element);
+      // return element;
     } catch (e) {
       if (!this.options.optional) {
         throw e;
