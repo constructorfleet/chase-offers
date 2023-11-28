@@ -1,32 +1,23 @@
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import { AppConfig } from "./app.config";
-import { AppService } from "./app.service";
-
-@Module({
-  imports: [ConfigModule.forFeature(AppConfig)],
-  providers: [AppService],
-})
-export class AppModule {}
-
-/**
- * import { Module } from "@nestjs/common";
 import { TypedConfigModule, dotenvLoader, fileLoader } from "nest-typed-config";
+import { AppConfig } from "./app.config";
 import { AppService } from "./app.service";
 import { RootConfig } from "./config";
 
 @Module({
   imports: [
+    ConfigModule.forFeature(AppConfig),
     TypedConfigModule.forRoot({
       schema: RootConfig,
       load: [
-        fileLoader({
-          absolutePath: "./config.yaml",
-          ignoreEnvironmentVariableSubstitution: false,
-        }),
         dotenvLoader({
           envFilePath: "./.env",
           expandVariables: true,
+        }),
+        fileLoader({
+          absolutePath: "./config.yaml",
+          ignoreEnvironmentVariableSubstitution: false,
         }),
       ],
     }),
@@ -34,5 +25,3 @@ import { RootConfig } from "./config";
   providers: [AppService],
 })
 export class AppModule {}
-
- */
