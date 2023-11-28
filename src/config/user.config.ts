@@ -26,6 +26,7 @@ export class UserAccountConfig {
         { value: TOTPCredentialsConfig, name: "totp" },
       ],
     },
+    keepDiscriminatorProperty: true,
   })
   @ValidateNested()
   credentials: CredentialsConfig<string>;
@@ -36,7 +37,7 @@ export class UserConfig {
   @IsNotEmpty()
   id: string;
 
-  @ArrayUnique<AccountConfig>((account) => account.type, { each: true })
+  @ArrayUnique<AccountConfig>((account) => account.type)
   @ArrayMinSize(1)
   @ValidateNested()
   @Type(() => UserAccountConfig)

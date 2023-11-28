@@ -1,15 +1,8 @@
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  Matches,
-} from "class-validator";
+import { IsNotEmpty, IsOptional, IsString, Matches } from "class-validator";
 import { VariablePathPattern } from "src/common";
 import { Actions, VariableActions } from "./index";
 
 export abstract class ActionConfig<Action extends Actions> {
-  @IsEnum(Actions)
   @IsNotEmpty()
   abstract type: Action;
 }

@@ -1,6 +1,5 @@
 import { Type } from "class-transformer";
 import {
-  IsEnum,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -9,16 +8,15 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Steps } from ".";
-import { Select, SelectorConfig } from "../selectors/selector.config";
+import { SelectorConfig } from "../selectors/selector.config";
 
 export abstract class StepConfig {
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @IsEnum(Steps)
   @IsNotEmpty()
-  abstract type: Steps;
+  type: Steps = "single";
 
   @IsNumber()
   @IsOptional()
@@ -28,5 +26,5 @@ export abstract class StepConfig {
 
   @ValidateNested()
   @Type(() => SelectorConfig)
-  selector: SelectorConfig<Select>;
+  selector: SelectorConfig;
 }

@@ -1,5 +1,6 @@
 import { Type } from "class-transformer";
-import { IsArray, IsEnum, IsUrl, ValidateNested } from "class-validator";
+import { IsEnum, IsUrl, ValidateNested } from "class-validator";
+import { EnsureArray } from "src/common";
 import { ForEachStepConfig, StepConfig, WhileFoundStepConfig } from "./steps";
 import { SingleStepConfig } from "./steps/single-step.config";
 
@@ -13,7 +14,7 @@ export abstract class AccountConfig {
   @IsUrl()
   url: URL;
 
-  @IsArray({ each: true })
+  @EnsureArray
   @ValidateNested()
   @Type(() => StepConfig, {
     discriminator: {
@@ -24,6 +25,7 @@ export abstract class AccountConfig {
         { value: WhileFoundStepConfig, name: "whileFound" },
       ],
     },
+    keepDiscriminatorProperty: true,
   })
   steps: StepConfig[];
 }

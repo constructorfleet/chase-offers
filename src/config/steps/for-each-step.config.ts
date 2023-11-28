@@ -1,7 +1,6 @@
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 import {
   Equals,
-  IsArray,
   IsNotEmpty,
   IsString,
   Matches,
@@ -19,8 +18,8 @@ export class ForEachStepConfig extends StepConfig {
   @Equals(ForEachStep)
   type: ForEachStep = ForEachStep;
 
-  @IsArray({ each: true })
   @ValidateNested()
+  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
   @Type(() => StepConfig, {
     discriminator: {
       property: "type",
@@ -30,6 +29,7 @@ export class ForEachStepConfig extends StepConfig {
         { value: WhileFoundStepConfig, name: "whileFound" },
       ],
     },
+    keepDiscriminatorProperty: true,
   })
   forEach: StepConfig[];
 

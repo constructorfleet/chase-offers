@@ -113,11 +113,11 @@ export class AppService {
         .setChromeOptions(chromeOptions)
         .build();
       console.log("Running...");
-      await this.driver.navigate().to("https://chase.com");
-      await this.authenticate();
-      await this.navigateToOffers();
-      const newOffers = await this.processCards();
-      console.dir(newOffers, { depth: 5 });
+      // await this.driver.navigate().to("https://chase.com");
+      // await this.authenticate();
+      // await this.navigateToOffers();
+      // const newOffers = await this.processCards();
+      // console.dir(newOffers, { depth: 5 });
     } finally {
       await this.driver.close();
     }

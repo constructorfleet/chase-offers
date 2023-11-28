@@ -1,17 +1,14 @@
 import { Type } from "class-transformer";
 import {
-  ArrayMinSize,
-  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   Matches,
-  ValidateNested,
 } from "class-validator";
 import { MapUniqueKeys } from "class-validator-extended";
-import { VariablePathPattern } from "src/common";
+import { EnsureArray, VariablePathPattern } from "src/common";
 import {
   ActionConfig,
   Actions,
@@ -29,7 +26,7 @@ const Select = ["first", "all"] as const;
 
 export type Select = (typeof Select)[number];
 
-export class SelectorConfig<SelectOption extends Select = "all"> {
+export class SelectorConfig {
   @IsString()
   @IsNotEmpty()
   cssSelector: string;
@@ -40,7 +37,7 @@ export class SelectorConfig<SelectOption extends Select = "all"> {
 
   @IsEnum(Select)
   @IsNotEmpty()
-  select: SelectOption;
+  select: Select = "first";
 
   @IsOptional()
   @MapUniqueKeys((key) => key)
@@ -57,10 +54,7 @@ export class SelectorConfig<SelectOption extends Select = "all"> {
   @IsNotEmpty()
   iFrameSelector: string = "default";
 
-  @IsArray({ each: true })
-  @ArrayMinSize(1)
-  @IsNotEmpty()
-  @ValidateNested()
+  @EnsureArray
   @Type(() => ActionConfig, {
     discriminator: {
       property: "type",
@@ -71,6 +65,7 @@ export class SelectorConfig<SelectOption extends Select = "all"> {
         { value: TextActionConfig, name: TextAction },
       ],
     },
+    keepDiscriminatorProperty: true,
   })
   actions: ActionConfig<Actions>[];
 }

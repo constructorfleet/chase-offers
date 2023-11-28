@@ -1,11 +1,6 @@
 import { Type } from "class-transformer";
-import {
-  ArrayMinSize,
-  ArrayUnique,
-  IsNotEmpty,
-  IsString,
-  ValidateNested,
-} from "class-validator";
+import { IsNotEmpty, IsString, ValidateNested } from "class-validator";
+import { EnsureUniqueArray } from "src/common";
 import { AccountConfig } from "./account.config";
 import { UserConfig } from "./user.config";
 
@@ -14,14 +9,12 @@ export class RootConfig {
   @IsNotEmpty()
   userDataDirectory: string;
 
-  @ArrayUnique<UserConfig>((userConfig) => userConfig.id)
-  @ArrayMinSize(1)
-  @ValidateNested({ each: true })
+  @EnsureUniqueArray<UserConfig>((userConfig) => userConfig.id)
+  @ValidateNested()
   @Type(() => UserConfig)
   users: UserConfig[];
 
-  @ArrayUnique<AccountConfig>((accountConfig) => accountConfig.type)
-  @ArrayMinSize(1)
+  @EnsureUniqueArray<AccountConfig>((accountConfig) => accountConfig.type)
   @ValidateNested()
   @Type(() => AccountConfig)
   accounts: AccountConfig[];
