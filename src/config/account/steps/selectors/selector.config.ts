@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import { Type } from "class-transformer";
 import {
   IsBoolean,
@@ -26,6 +27,7 @@ const Select = ["first", "all"] as const;
 
 export type Select = (typeof Select)[number];
 
+@Injectable()
 export class SelectorConfig {
   @IsString()
   @IsNotEmpty()

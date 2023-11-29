@@ -8,7 +8,7 @@ import {
   ValidateNested,
 } from "class-validator";
 import { Steps } from ".";
-import { SelectorConfig } from "../selectors/selector.config";
+import { SelectorConfig } from "./selectors/selector.config";
 
 export abstract class StepConfig {
   @IsString()

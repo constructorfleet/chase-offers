@@ -1,14 +1,16 @@
+import { Injectable } from "@nestjs/common";
 import { Type } from "class-transformer";
-import { IsEnum, IsUrl, ValidateNested } from "class-validator";
+import { IsNotEmpty, IsString, IsUrl, ValidateNested } from "class-validator";
 import { EnsureArray } from "src/common";
 import { ForEachStepConfig, StepConfig, WhileFoundStepConfig } from "./steps";
 import { SingleStepConfig } from "./steps/single-step.config";
 
-export const AccountTypes = ["chase", "paypal", "ibotta"] as const;
-export type AccountType = (typeof AccountTypes)[number];
+export type AccountType = string;
 
-export abstract class AccountConfig {
-  @IsEnum(AccountTypes)
+@Injectable()
+export class AccountConfig {
+  @IsString()
+  @IsNotEmpty()
   type: AccountType;
 
   @IsUrl()

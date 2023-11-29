@@ -1,21 +1,23 @@
 import { Type } from "class-transformer";
 import {
-  ArrayMinSize,
   ArrayUnique,
-  IsEnum,
+  IsArray,
   IsNotEmpty,
   IsString,
   ValidateNested,
 } from "class-validator";
-import { AccountConfig, AccountType, AccountTypes } from "./account.config";
+import { AccountType } from "../account/account.config";
 import {
   BasicCredentialsConfig,
   CredentialsConfig,
   TOTPCredentialsConfig,
 } from "./credentials";
 
+export type UserType = string;
+
 export class UserAccountConfig {
-  @IsEnum(AccountTypes)
+  @IsString()
+  @IsNotEmpty()
   type: AccountType;
 
   @Type(() => CredentialsConfig, {
@@ -35,11 +37,9 @@ export class UserAccountConfig {
 export class UserConfig {
   @IsString()
   @IsNotEmpty()
-  id: string;
+  id: UserType;
 
-  @ArrayUnique<AccountConfig>((account) => account.type)
-  @ArrayMinSize(1)
-  @ValidateNested()
-  @Type(() => UserAccountConfig)
-  accounts: UserAccountConfig[];
+  @IsArray()
+  @ArrayUnique((config) => config.type)
+  accounts: AccountType[];
 }

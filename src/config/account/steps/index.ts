@@ -1,4 +1,5 @@
 export * from "./for-each-step.config";
+export * from "./selectors";
 export * from "./single-step.config";
 export * from "./step.config";
 export * from "./while-found-step.config";

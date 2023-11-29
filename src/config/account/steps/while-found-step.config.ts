@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import { Transform, Type } from "class-transformer";
 import {
   Equals,
@@ -7,16 +8,17 @@ import {
   ValidateNested,
 } from "class-validator";
 import { VariablePathPattern } from "src/common";
+import { ForEachStepConfig } from "./for-each-step.config";
 import { SingleStepConfig } from "./single-step.config";
 import { StepConfig } from "./step.config";
-import { WhileFoundStepConfig } from "./while-found-step.config";
 
-export const ForEachStep = "forEach" as const;
-export type ForEachStep = typeof ForEachStep;
+export const WhileFoundStep = "whileFound" as const;
+export type WhileFoundStep = typeof WhileFoundStep;
 
-export class ForEachStepConfig extends StepConfig {
-  @Equals(ForEachStep)
-  type: ForEachStep = ForEachStep;
+@Injectable()
+export class WhileFoundStepConfig extends StepConfig {
+  @Equals(WhileFoundStep)
+  type: WhileFoundStep = WhileFoundStep;
 
   @ValidateNested()
   @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
@@ -31,7 +33,7 @@ export class ForEachStepConfig extends StepConfig {
     },
     keepDiscriminatorProperty: true,
   })
-  forEach: StepConfig[];
+  whileFound: StepConfig[];
 
   @IsString()
   @IsNotEmpty()

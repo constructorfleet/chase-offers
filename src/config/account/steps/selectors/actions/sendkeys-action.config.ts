@@ -1,3 +1,4 @@
+import { Injectable } from "@nestjs/common";
 import {
   Equals,
   IsEnum,
@@ -21,6 +22,7 @@ export const SendKeysOptions = [
 export type SendKeysAction = typeof SendKeysAction;
 export type SendKeysOption = (typeof SendKeysOptions)[number];
 
+@Injectable()
 export class SendKeysActionConfig extends ActionConfig<SendKeysAction> {
   @Equals(SendKeysAction)
   type: SendKeysAction;
