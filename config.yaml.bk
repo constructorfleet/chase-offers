@@ -1,0 +1,75 @@
+userDataDirectory: "~/.webdriver"
+users:
+  tglenn:
+    chase:
+      credentials:
+        type: basic
+        username: ${TGLENN_CHASE_USERNAME}
+        password: ${TGLENN_CHASE_PASSWORD}
+  ajanis:
+    chase:
+      credentials:
+        type: basic
+        username: ${AJANIS_CHASE_USERNAME}
+        password: ${AJANIS_CHASE_PASSWORD}
+accounts:
+  - type: chase
+    url: https://chase.com
+    steps:
+      - name: Navigate to login page if needed
+        selector:
+          cssSelector: a.signInBtn
+          isOptional: true
+          action: click
+      - name: Enter username
+        selector:
+          cssSelector: input[name='userId']
+          iFrameSelector: iFrame#logonbox
+          action: sendKeys
+          arguments:
+            - username
+      - name: Enter password
+        selector:
+          cssSelector: input[name='password']
+          iFrameSelector: iFrame#logonbox
+          action: sendKeys
+          arguments:
+            - password
+      - name: Sign-in
+        selector:
+          cssSelector: button[type='submit']
+          iFrameSelector: iFrame#logonbox
+          action: click
+      - name: Navigate to offers
+        timeout: 120000
+        selector:
+          cssSelector: div[data-testid='offer-carousel-header-container']
+          action: click
+      - name: Iterate over cards
+        type: forEach
+        selector:
+          cssSelector: "#select-credit-card-account"
+          action: count
+        indexVariable: cardIndex
+        forEach:
+          - name: Open card dropdown
+            selector:
+              cssSelector: "#select-credit-card-account"
+              action: click
+          - name: Select next card
+            selector:
+              cssSelector: "#select-credit-card-account > mds-select-option:nth-child({index})"
+              templateRepalcers:
+                "{index}": cardIndex
+              action: click
+          - name: Activate new offers
+            selector:
+              cssSelector: mds-icon[type='ico_add_circle']
+              action: click
+            whileFound:
+              - name: Return to offers
+                selector:
+                  cssSelector: "#mds-secondary-back-navbar"
+                  shadowRootCSSSelector: "#back-button"
+                  action: click
+          

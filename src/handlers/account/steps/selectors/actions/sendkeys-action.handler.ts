@@ -6,10 +6,14 @@ import {
   SendVariableOption,
 } from "src/config";
 import { ActionHandler } from "./action.handler";
+import { RegisterAction } from "./action.providers";
 
+@RegisterAction(SendKeysActionConfig)
 export class SendKeysActionHandler<
   CredentialsProvider extends CredentialConfigs,
-> extends ActionHandler<SendKeysActionConfig, CredentialsProvider> {
+> extends ActionHandler<SendKeysActionConfig, "first", CredentialsProvider> {
+  public readonly select: "first";
+
   constructor(config: SendKeysActionConfig) {
     super(config);
   }

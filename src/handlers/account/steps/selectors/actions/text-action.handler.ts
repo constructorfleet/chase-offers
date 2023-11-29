@@ -2,17 +2,20 @@ import { WebElement } from "selenium-webdriver";
 import { VariableMap, setVariable } from "src/common";
 import { CredentialConfigs, TextActionConfig } from "src/config";
 import { ActionHandler } from "./action.handler";
+import { RegisterAction } from "./action.providers";
 
 const regex = (variable: string, captureGroup: string): RegExp =>
   new RegExp(`(?:<${variable}>${captureGroup})`);
 const getGroup = (variable: string, match: RegExpMatchArray): string | null =>
   variable in (match.groups ?? {}) ? match.groups![variable] : null;
 
+@RegisterAction(TextActionConfig)
 export class TextActionHandler extends ActionHandler<
   TextActionConfig,
-  CredentialConfigs,
-  VariableMap
+  "first",
+  CredentialConfigs
 > {
+  public readonly select: "first";
   constructor(config: TextActionConfig) {
     super(config);
   }

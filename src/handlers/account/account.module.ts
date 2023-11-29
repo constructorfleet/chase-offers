@@ -6,6 +6,6 @@ import { Account } from "./account.provider";
 @Module({
   imports: [AccountsConfigModule],
   providers: [Account, AccountHandler],
-  export: [AccountHandler],
+  exports: [AccountHandler],
 })
 export class AccountsModule {}

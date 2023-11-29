@@ -1,0 +1,7 @@
+id: ajanis
+accounts:
+  - type: chase
+    credentials:
+      type: basic
+      username: ${AJANIS_CHASE_USERNAME}
+      password: ${AJANIS_CHASE_PASSWORD}

@@ -1,26 +1,20 @@
+import { DiscoveryModule } from "@golevelup/nestjs-discovery";
 import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
-import { TypedConfigModule, dotenvLoader, fileLoader } from "nest-typed-config";
-import { AppConfig } from "./app.config";
 import { AppService } from "./app.service";
-import { RootConfig } from "./config";
+import {
+  AccountConfigs,
+  AccountsConfigModule,
+  AppConfigModule,
+  UserConfigs,
+  UsersConfigModule,
+} from "./config";
 
 @Module({
   imports: [
-    ConfigModule.forFeature(AppConfig),
-    TypedConfigModule.forRoot({
-      schema: RootConfig,
-      load: [
-        dotenvLoader({
-          envFilePath: "./.env",
-          expandVariables: true,
-        }),
-        fileLoader({
-          absolutePath: "./config.yaml",
-          ignoreEnvironmentVariableSubstitution: false,
-        }),
-      ],
-    }),
+    AppConfigModule.forRoot("config", "app.config.yaml"),
+    UsersConfigModule.forRoot("config", "users", UserConfigs),
+    AccountsConfigModule.forRoot("config", "accounts", AccountConfigs),
+    DiscoveryModule,
   ],
   providers: [AppService],
 })

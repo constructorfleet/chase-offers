@@ -1,12 +1,11 @@
 import { Module } from "@nestjs/common";
+import { AccountsModule } from "../account/account.module";
 import { BrowserModule } from "../browser";
-import { AccountsModule } from "./account/account.module";
 import { UserHandler } from "./user.handler";
-import { User } from "./user.providers";
 
 @Module({
   imports: [BrowserModule, AccountsModule],
-  providers: [User, UserHandler],
+  providers: [UserHandler],
   exports: [UserHandler],
 })
 export class UserModule {}

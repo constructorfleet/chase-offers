@@ -1,0 +1,7 @@
+id: tglenn
+accounts:
+  - type: chase
+    credentials:
+      type: basic
+      username: ${TGLENN_CHASE_USERNAME}
+      password: ${TGLENN_CHASE_PASSWORD}

@@ -1,0 +1,6 @@
+userDataDirectory: "~/.webdriver"
+users:
+  - tglenn
+  - ajanis
+accounts:
+  - chase

@@ -1,19 +1,11 @@
-import { Inject, Injectable } from "@nestjs/common";
+import { DiscoveryService } from "@golevelup/nestjs-discovery";
+import { Inject, Injectable, Logger } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
 import { Builder, By, WebDriver, WebElement, until } from "selenium-webdriver";
 import { Options } from "selenium-webdriver/chrome";
 import { AppConfig } from "./app.config";
+import { AppConfig as RootConfig, StepConfig, UserConfigs } from "./config";
 import { selectors } from "./selector";
-
-const chromeOptions = new Options();
-chromeOptions.addArguments("--no-sandbox");
-chromeOptions.addArguments("--user-data-dir=/Users/tglenn/.webdriver");
-chromeOptions.addArguments("--profile-directory=ajanis");
-
-const sleep = (ms: number) =>
-  new Promise<void>((resolve) => {
-    setTimeout(() => resolve(), ms);
-  });
 
 type OfferDetails = {
   storeName: string;
@@ -24,11 +16,21 @@ type OfferDetails = {
 
 @Injectable()
 export class AppService {
+  private readonly logger: Logger = new Logger(AppService.name);
+  private readonly appConfig: ConfigType<typeof AppConfig> = {
+    username: process.env.CHASE_USERNAME,
+    password: process.env.CHASE_PASSWORD,
+    userId: process.env.USER_ID,
+  };
   private driver: WebDriver;
   constructor(
-    @Inject(AppConfig.KEY)
-    private readonly appConfig: ConfigType<typeof AppConfig>
-  ) {}
+    // @Inject(AppConfig.KEY)
+    private readonly config: RootConfig,
+    @Inject(UserConfigs) private readonly users: UserConfigs,
+    private readonly discover: DiscoveryService
+  ) {
+    this.logger.log(config.users);
+  }
 
   async enterCredentials() {
     await selectors.auth.username.exec(this.driver, (element: WebElement) =>
@@ -107,6 +109,22 @@ export class AppService {
   }
 
   async run() {
+    const providers = await this.discover.providers((provider) => {
+      this.logger.log(
+        provider.name,
+        provider.dependencyType,
+        provider.injectType
+      );
+      return provider.instance instanceof StepConfig;
+    });
+    this.logger.log(`Found ${providers.length} StepConfigs`);
+    providers.forEach(({ name, instance, injectType, dependencyType }) =>
+      this.logger.log(`${name} ${dependencyType.name} ${instance}`)
+    );
+    const chromeOptions = new Options();
+    chromeOptions.addArguments("--no-sandbox");
+    chromeOptions.addArguments("--user-data-dir=/Users/tglenn/.webdriver");
+    chromeOptions.addArguments(`--profile-directory=${this.appConfig.userId}`);
     try {
       this.driver = await new Builder()
         .forBrowser("chrome")
