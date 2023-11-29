@@ -1,4 +1,4 @@
-userDataDirectory: "~/.webdriver"
+userDataDirectory: "/Users/tglenn/.webdriver"
 users:
   - tglenn
   - ajanis

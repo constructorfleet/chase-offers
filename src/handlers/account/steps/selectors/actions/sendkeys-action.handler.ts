@@ -1,3 +1,4 @@
+import { Logger } from "@nestjs/common";
 import { WebElement } from "selenium-webdriver";
 import { VariableMap, getVariable } from "src/common";
 import {
@@ -12,6 +13,7 @@ import { RegisterAction } from "./action.providers";
 export class SendKeysActionHandler<
   CredentialsProvider extends CredentialConfigs,
 > extends ActionHandler<SendKeysActionConfig, "first", CredentialsProvider> {
+  private readonly logger: Logger = new Logger(SendKeysActionHandler.name);
   public readonly select: "first";
 
   constructor(config: SendKeysActionConfig) {
@@ -19,7 +21,7 @@ export class SendKeysActionHandler<
   }
 
   protected async handle(
-    element: WebElement,
+    element: WebElement[],
     variableMap: VariableMap,
     credentials: CredentialsProvider
   ): Promise<void> {
@@ -30,6 +32,7 @@ export class SendKeysActionHandler<
       // @ts-ignore
       value = await credentials.get(this.config.send);
     }
-    await element.sendKeys(value);
+    this.logger.log(`Sending keys ${value}`);
+    await element[0].sendKeys(value);
   }
 }

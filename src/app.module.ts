@@ -8,12 +8,15 @@ import {
   UserConfigs,
   UsersConfigModule,
 } from "./config";
+import { UserModule } from "./handlers";
 
 @Module({
   imports: [
-    AppConfigModule.forRoot("config", "app.config.yaml"),
+    // ConfigurationModule.forRoot()
+    AppConfigModule.forRoot("config", "app.yaml"),
     UsersConfigModule.forRoot("config", "users", UserConfigs),
     AccountsConfigModule.forRoot("config", "accounts", AccountConfigs),
+    UserModule.forRoot(),
     DiscoveryModule,
   ],
   providers: [AppService],

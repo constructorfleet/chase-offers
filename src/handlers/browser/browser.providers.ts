@@ -18,14 +18,20 @@ export const InjectWebDriverFactory = Inject(WebDriverFactoryKey);
 export type WebDriverFactory = (userConfig: UserConfig) => Promise<WebDriver>;
 export const WebDriverFactoryProvider: FactoryProvider = {
   provide: WebDriverFactoryKey,
-  inject: [BrowserOptions.provide],
+  inject: [AppConfig],
   useFactory:
-    async (options: ChromeOptions): Promise<WebDriverFactory> =>
-    (userConfig: UserConfig): Promise<WebDriver> =>
-      new Builder()
+    (appConfig: AppConfig): WebDriverFactory =>
+    async (userConfig: UserConfig): Promise<WebDriver> => {
+      console.dir(userConfig);
+      ///Users/tglenn/.webdriver
+      return new Builder()
         .forBrowser("chrome")
         .setChromeOptions(
-          options.addArguments(`--profile-directory=${userConfig.id}`)
+          new ChromeOptions()
+            .addArguments("--no-sandbox")
+            .addArguments(`--user-data-dir=${appConfig.userDataDirectory}`)
+            .addArguments(`--profile-directory=${userConfig.id}`)
         )
-        .build(),
+        .build();
+    },
 };

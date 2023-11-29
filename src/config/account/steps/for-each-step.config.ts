@@ -39,4 +39,9 @@ export class ForEachStepConfig extends StepConfig {
   @IsNotEmpty()
   @Matches(VariablePathPattern)
   indexVariable: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(VariablePathPattern)
+  loopCountVariable: string;
 }

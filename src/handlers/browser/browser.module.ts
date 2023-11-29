@@ -1,13 +1,15 @@
-import { Module } from "@nestjs/common";
-import { AppConfigModule, UsersConfigModule } from "src/config";
-import {
-  WebDriverFactoryKey,
-  WebDriverFactoryProvider,
-} from "./browser.providers";
+import { DynamicModule, Module } from "@nestjs/common";
+import { AppConfigModule } from "src/config";
+import { BrowserOptions, WebDriverFactoryProvider } from "./browser.providers";
 
-@Module({
-  imports: [AppConfigModule, UsersConfigModule],
-  providers: [WebDriverFactoryProvider],
-  exports: [WebDriverFactoryKey],
-})
-export class BrowserModule {}
+@Module({})
+export class BrowserModule {
+  static forRoot(): DynamicModule {
+    return {
+      module: BrowserModule,
+      imports: [AppConfigModule],
+      providers: [BrowserOptions, WebDriverFactoryProvider],
+      exports: [WebDriverFactoryProvider.provide],
+    };
+  }
+}

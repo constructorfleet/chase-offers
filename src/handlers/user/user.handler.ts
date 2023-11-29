@@ -1,6 +1,13 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { WebDriver } from "selenium-webdriver";
-import { UserConfig, UserConfigs } from "src/config";
+import { VariableMap } from "src/common";
+import {
+  CredentialConfigs,
+  UserAccountConfig,
+  UserConfig,
+  UserConfigs,
+} from "src/config";
+import { AccountHandlers } from "../account";
 import { InjectWebDriverFactory } from "../browser";
 import { WebDriverFactory } from "../browser/browser.providers";
 
@@ -11,7 +18,9 @@ export class UserHandler {
 
   constructor(
     @InjectWebDriverFactory private readonly driverFactory: WebDriverFactory,
-    @Inject(UserConfigs) private readonly userConfigs: UserConfigs
+    private readonly accountMap: AccountHandlers,
+    @Inject(UserConfigs)
+    private readonly userConfigs: UserConfigs
   ) {}
 
   private get userConfig(): UserConfig | undefined {
@@ -22,7 +31,7 @@ export class UserHandler {
     return this.userConfig?.id;
   }
 
-  get accounts(): string[] {
+  get accounts(): UserAccountConfig[] {
     return this.userConfig?.accounts;
   }
 
@@ -40,6 +49,28 @@ export class UserHandler {
     }
     this.webDriver = await this.driverFactory(this.userConfig);
     return true;
+  }
+
+  async handle(variableMap: VariableMap = {}): Promise<VariableMap> {
+    try {
+      const accounts = this.accounts.map((account) => ({
+        handler: this.accountMap.for(account),
+        credentials: account.credentials,
+      }));
+      for (const account of accounts) {
+        variableMap = await account.handler.handle(
+          this.driver,
+          variableMap,
+          account.credentials as CredentialConfigs
+        );
+      }
+      return variableMap;
+    } catch (e) {
+      console.error(e);
+      return variableMap;
+    } finally {
+      await this.webDriver.close();
+    }
   }
 
   hasNext(): boolean {

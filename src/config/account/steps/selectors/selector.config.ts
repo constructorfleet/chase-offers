@@ -1,15 +1,14 @@
 import { Injectable } from "@nestjs/common";
 import { Type } from "class-transformer";
 import {
+  IsArray,
   IsBoolean,
   IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
-  Matches,
+  ValidateNested,
 } from "class-validator";
-import { MapUniqueKeys } from "class-validator-extended";
-import { EnsureArray, VariablePathPattern } from "src/common";
 import {
   ActionConfig,
   Actions,
@@ -35,15 +34,14 @@ export class SelectorConfig {
 
   @IsBoolean()
   @IsOptional()
-  isOptional: boolean = true;
+  isOptional: boolean = false;
 
   @IsEnum(Select)
   @IsNotEmpty()
   select: Select = "first";
 
   @IsOptional()
-  @MapUniqueKeys((key) => key)
-  @Matches(VariablePathPattern, { each: true })
+  // @Matches(VariablePathPattern, { each: true })
   templateReplacers: Map<string, string> = undefined;
 
   @IsString()
@@ -56,7 +54,8 @@ export class SelectorConfig {
   @IsNotEmpty()
   iFrameSelector: string = "default";
 
-  @EnsureArray
+  @IsArray()
+  @ValidateNested()
   @Type(() => ActionConfig, {
     discriminator: {
       property: "type",

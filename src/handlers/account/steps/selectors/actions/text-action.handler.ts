@@ -1,3 +1,4 @@
+import { Logger } from "@nestjs/common";
 import { WebElement } from "selenium-webdriver";
 import { VariableMap, setVariable } from "src/common";
 import { CredentialConfigs, TextActionConfig } from "src/config";
@@ -15,6 +16,7 @@ export class TextActionHandler extends ActionHandler<
   "first",
   CredentialConfigs
 > {
+  private readonly logger: Logger = new Logger(TextActionHandler.name);
   public readonly select: "first";
   constructor(config: TextActionConfig) {
     super(config);
@@ -28,10 +30,12 @@ export class TextActionHandler extends ActionHandler<
   }
 
   protected async handle(
-    element: WebElement,
+    element: WebElement[],
     variableMap: VariableMap
   ): Promise<VariableMap> {
-    const text = await element.getText();
+    this.logger.log(`Getting text`);
+    const text = await element[0].getText();
+    this.logger.log(`Got text ${text}`);
     const result = Object.entries(this.config.regexCaptureGroups || {}).reduce(
       (result: Record<string, unknown>, [variable, captureGroup]) => {
         result[variable] = getGroup(
@@ -43,10 +47,6 @@ export class TextActionHandler extends ActionHandler<
       {} as Record<string, unknown>
     );
 
-    return setVariable(
-      this.getVariablePath().join("."),
-      this.config.variableName,
-      variableMap
-    );
+    return setVariable(this.getVariablePath().join("."), result, variableMap);
   }
 }

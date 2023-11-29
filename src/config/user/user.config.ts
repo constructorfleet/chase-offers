@@ -20,6 +20,7 @@ export class UserAccountConfig {
   @IsNotEmpty()
   type: AccountType;
 
+  @ValidateNested()
   @Type(() => CredentialsConfig, {
     discriminator: {
       property: "type",
@@ -30,7 +31,6 @@ export class UserAccountConfig {
     },
     keepDiscriminatorProperty: true,
   })
-  @ValidateNested()
   credentials: CredentialsConfig<string>;
 }
 
@@ -41,5 +41,7 @@ export class UserConfig {
 
   @IsArray()
   @ArrayUnique((config) => config.type)
-  accounts: AccountType[];
+  @ValidateNested()
+  @Type(() => UserAccountConfig)
+  accounts: UserAccountConfig[];
 }

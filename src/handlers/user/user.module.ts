@@ -1,11 +1,16 @@
-import { Module } from "@nestjs/common";
+import { DynamicModule, Module } from "@nestjs/common";
 import { AccountsModule } from "../account/account.module";
 import { BrowserModule } from "../browser";
 import { UserHandler } from "./user.handler";
 
-@Module({
-  imports: [BrowserModule, AccountsModule],
-  providers: [UserHandler],
-  exports: [UserHandler],
-})
-export class UserModule {}
+@Module({})
+export class UserModule {
+  static forRoot(): DynamicModule {
+    return {
+      module: UserModule,
+      imports: [BrowserModule.forRoot(), AccountsModule.forRoot()],
+      providers: [UserHandler],
+      exports: [UserHandler],
+    };
+  }
+}

@@ -2,7 +2,7 @@ import { WebElement } from "selenium-webdriver";
 import { VariableMap } from "src/common";
 import { ActionConfigs, CredentialConfigs, Select } from "src/config";
 
-type SelectElements<Select> = Select extends "first"
+export type SelectElements<Select> = Select extends "first"
   ? WebElement
   : WebElement[];
 
@@ -16,7 +16,7 @@ export abstract class ActionHandler<
   protected constructor(protected readonly config: ActionConfig) {}
 
   async execute(
-    element: SelectElements<SelectOption>,
+    element: WebElement[],
     variableMap: VariableMap,
     credentials: CredentialProvider
   ): Promise<VariableMap> {
@@ -28,7 +28,7 @@ export abstract class ActionHandler<
   }
 
   protected abstract handle(
-    element: SelectElements<SelectOption>,
+    element: WebElement[],
     variableMap: VariableMap,
     credentials: CredentialProvider
   ): Promise<VariableMap | void>;

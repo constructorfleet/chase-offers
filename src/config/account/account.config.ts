@@ -25,6 +25,7 @@ export class AccountConfig {
         { value: SingleStepConfig, name: "single" },
         { value: ForEachStepConfig, name: "forEach" },
         { value: WhileFoundStepConfig, name: "whileFound" },
+        { value: SingleStepConfig, name: undefined },
       ],
     },
     keepDiscriminatorProperty: true,

@@ -2,59 +2,78 @@ type: chase
 url: https://chase.com
 steps:
   - name: Navigate to login page if needed
+    timeout: 5000
     selector:
       cssSelector: a.signInBtn
       isOptional: true
-      action: click
+      actions:
+        - type: click
   - name: Enter username
+    timeout: 5000
     selector:
       cssSelector: input[name='userId']
       iFrameSelector: iFrame#logonbox
-      action: sendKeys
-      arguments:
-        - username
+      actions:
+        - type: sendKeys
+          send: username
   - name: Enter password
     selector:
       cssSelector: input[name='password']
       iFrameSelector: iFrame#logonbox
-      action: sendKeys
-      arguments:
-        - password
+      actions: 
+        - type: sendKeys
+          send: password
   - name: Sign-in
     selector:
       cssSelector: button[type='submit']
       iFrameSelector: iFrame#logonbox
-      action: click
+      actions:
+        - type: click
   - name: Navigate to offers
     timeout: 120000
     selector:
       cssSelector: div[data-testid='offer-carousel-header-container']
-      action: click
+      actions:
+        - type: click
+  - name: Open card dropdown
+    selector:
+      cssSelector: "#select-credit-card-account"
+      actions:  
+        - type: click
   - name: Iterate over cards
     type: forEach
     selector:
-      cssSelector: "#select-credit-card-account"
-      action: count
+      cssSelector: "#select-credit-card-account > mds-select-option"
+      actions:  
+        - type: count
+          variableName: cardCount
     indexVariable: cardIndex
+    loopCountVariable: cardCount
     forEach:
-      - name: Open card dropdown
-        selector:
-          cssSelector: "#select-credit-card-account"
-          action: click
       - name: Select next card
         selector:
           cssSelector: "#select-credit-card-account > mds-select-option:nth-child({index})"
-          templateRepalcers:
+          templateReplacers:
             "{index}": cardIndex
-          action: click
+          actions: 
+            - type: click
       - name: Activate new offers
         selector:
           cssSelector: mds-icon[type='ico_add_circle']
-          action: click
+          isOptional: true
+          actions: 
+            - type: click
+        indexVariable: offerIndex
         whileFound:
           - name: Return to offers
             selector:
               cssSelector: "#mds-secondary-back-navbar"
               shadowRootCSSSelector: "#back-button"
-              action: click
+              actions:
+                - type: click
+      - name: Open card dropdown
+        selector:
+          cssSelector: "#select-credit-card-account"
+          actions:  
+            - type: click
       

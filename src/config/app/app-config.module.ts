@@ -5,16 +5,18 @@ import { AppConfig } from "./app.config";
 
 @Module({})
 export class AppConfigModule {
+  static instance: DynamicModule;
   static forRoot(
     appConfigDirectory: string = joinPath(process.cwd(), "config"),
     appConfigFilename = "app.config.yaml",
     envFilePath: string | string[] = ".env"
   ): DynamicModule {
-    return {
+    const module = {
       global: true,
       module: AppConfigModule,
       imports: [
         TypedConfigModule.forRoot({
+          isGlobal: true,
           schema: AppConfig,
           load: [
             dotenvLoader({
@@ -32,5 +34,7 @@ export class AppConfigModule {
       ],
       exports: [TypedConfigModule],
     };
+    this.instance = module;
+    return module;
   }
 }

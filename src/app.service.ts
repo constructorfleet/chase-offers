@@ -1,10 +1,10 @@
 import { DiscoveryService } from "@golevelup/nestjs-discovery";
-import { Inject, Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { ConfigType } from "@nestjs/config";
-import { Builder, By, WebDriver, WebElement, until } from "selenium-webdriver";
-import { Options } from "selenium-webdriver/chrome";
+import { By, WebDriver, WebElement, until } from "selenium-webdriver";
 import { AppConfig } from "./app.config";
-import { AppConfig as RootConfig, StepConfig, UserConfigs } from "./config";
+import { AppConfig as RootConfig } from "./config";
+import { UserHandler } from "./handlers/user/user.handler";
 import { selectors } from "./selector";
 
 type OfferDetails = {
@@ -26,10 +26,10 @@ export class AppService {
   constructor(
     // @Inject(AppConfig.KEY)
     private readonly config: RootConfig,
-    @Inject(UserConfigs) private readonly users: UserConfigs,
+    private readonly users: UserHandler,
     private readonly discover: DiscoveryService
   ) {
-    this.logger.log(config.users);
+    this.logger.log(users);
   }
 
   async enterCredentials() {
@@ -107,39 +107,44 @@ export class AppService {
     console.log("Waiting for offers button...");
     await selectors.account.offers.exec(this.driver);
   }
-
   async run() {
-    const providers = await this.discover.providers((provider) => {
-      this.logger.log(
-        provider.name,
-        provider.dependencyType,
-        provider.injectType
-      );
-      return provider.instance instanceof StepConfig;
-    });
-    this.logger.log(`Found ${providers.length} StepConfigs`);
-    providers.forEach(({ name, instance, injectType, dependencyType }) =>
-      this.logger.log(`${name} ${dependencyType.name} ${instance}`)
-    );
-    const chromeOptions = new Options();
-    chromeOptions.addArguments("--no-sandbox");
-    chromeOptions.addArguments("--user-data-dir=/Users/tglenn/.webdriver");
-    chromeOptions.addArguments(`--profile-directory=${this.appConfig.userId}`);
-    try {
-      this.driver = await new Builder()
-        .forBrowser("chrome")
-        .setChromeOptions(chromeOptions)
-        .build();
-      console.log("Running...");
-      // await this.driver.navigate().to("https://chase.com");
-      // await this.authenticate();
-      // await this.navigateToOffers();
-      // const newOffers = await this.processCards();
-      // console.dir(newOffers, { depth: 5 });
-    } finally {
-      await this.driver.close();
+    while (await this.users.next()) {
+      console.dir(await this.users.handle());
+      return;
     }
   }
+  // async run2() {
+  //   // const providers = await this.discover.providers((provider) => {
+  //   //   this.logger.log(
+  //   //     provider.name,
+  //   //     provider.dependencyType,
+  //   //     provider.injectType
+  //   //   );
+  //   //   return provider.instance instanceof StepConfig;
+  //   // });
+  //   // this.logger.log(`Found ${providers.length} StepConfigs`);
+  //   // providers.forEach(({ name, instance, injectType, dependencyType }) =>
+  //   //   this.logger.log(`${name} ${dependencyType.name} ${instance}`)
+  //   // );
+  //   const chromeOptions = new Options();
+  //   chromeOptions.addArguments("--no-sandbox");
+  //   chromeOptions.addArguments("--user-data-dir=/Users/tglenn/.webdriver");
+  //   chromeOptions.addArguments(`--profile-directory=${this.appConfig.userId}`);
+  //   try {
+  //     this.driver = await new Builder()
+  //       .forBrowser("chrome")
+  //       .setChromeOptions(chromeOptions)
+  //       .build();
+  //     console.log("Running...");
+  //     // await this.driver.navigate().to("https://chase.com");
+  //     // await this.authenticate();
+  //     // await this.navigateToOffers();
+  //     // const newOffers = await this.processCards();
+  //     // console.dir(newOffers, { depth: 5 });
+  //   } finally {
+  //     await this.driver.close();
+  //   }
+  // }
 
   async safeFindElement(selector: string): Promise<WebElement | null> {
     try {

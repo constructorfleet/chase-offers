@@ -20,7 +20,7 @@ type UserConfigFileToken = {
 
 const userConfigToken = (file: string, index: number): UserConfigFileToken => ({
   file,
-  token: `UserConfig${index}`,
+  token: `UserConfig${file.replace(/\.\w+$/, "")}`,
 });
 
 const userConfigProvider = (token: InjectionToken): FactoryProvider => ({
@@ -35,7 +35,7 @@ const userConfigsProvider = (
 ): FactoryProvider => ({
   provide: token,
   inject: [...userConfigTokens],
-  useFactory: (configs: UserConfig[]): UserConfig[] => configs,
+  useFactory: (...configs: UserConfig[]): UserConfig[] => configs,
 });
 
 @Module({})

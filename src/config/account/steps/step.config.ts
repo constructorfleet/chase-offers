@@ -22,7 +22,7 @@ export abstract class StepConfig {
   @IsOptional()
   @Min(1000)
   @Type(() => Number)
-  timeout: number = 10000;
+  timeout: number = 2000;
 
   @ValidateNested()
   @Type(() => SelectorConfig)

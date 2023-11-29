@@ -23,7 +23,7 @@ const accountConfigToken = (
   index: number
 ): AccountConfigFileToken => ({
   file,
-  token: `AccountConfig${index}`,
+  token: `AccountConfig${file.replace(/\.\w+$/, "")}`,
 });
 
 const accountConfigProvider = (token: InjectionToken): FactoryProvider => ({
@@ -38,7 +38,8 @@ const accountConfigsProvider = (
 ): FactoryProvider => ({
   provide: token,
   inject: [...accountConfigTokens],
-  useFactory: (configs: AccountConfig[]): AccountConfig[] => configs,
+  useFactory: (...configs: AccountConfig[]): AccountConfig[] =>
+    Array.isArray(configs) ? configs : [configs],
 });
 
 @Module({})
