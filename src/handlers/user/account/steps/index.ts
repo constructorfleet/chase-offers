@@ -1,7 +1,8 @@
 export * from "./for-each-step.handler";
+export * from "./selectors";
 export * from "./single-step.handler";
 export * from "./step.handler";
-export * from "./steps.module";
+export * from "./step.module";
 export * from "./while-found-step.handler";
 
 import { ForEachStepHandler } from "./for-each-step.handler";

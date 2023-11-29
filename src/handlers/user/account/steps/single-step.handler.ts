@@ -1,7 +1,7 @@
 import { Injectable, Scope } from "@nestjs/common";
 import { WebDriver } from "selenium-webdriver";
 import { VariableMap } from "src/common";
-import { SingleStepConfig } from "../../config/steps/single-step.config";
+import { SingleStepConfig } from "../../../../config/account/steps/single-step.config";
 import { StepHandler } from "./step.handler";
 
 @Injectable({

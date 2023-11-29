@@ -4,7 +4,7 @@ import {
   ActionConfigProvider,
   ActionHandlerKey,
   ActionHandlerProvider,
-} from "./actions.providers";
+} from "./action.providers";
 
 @Module({})
 export class ActionsModule {

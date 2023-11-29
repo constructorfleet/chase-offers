@@ -1,6 +1,6 @@
 import { WebDriver } from "selenium-webdriver";
 import { VariableMap } from "src/common/types";
-import { StepConfig } from "../../config/steps/index";
+import { StepConfig } from "../../../../config/account/steps/index";
 
 export abstract class StepHandler<StepConfigType extends StepConfig> {
   protected readonly timeout: number;

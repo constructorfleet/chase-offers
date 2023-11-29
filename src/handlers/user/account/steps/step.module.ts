@@ -5,7 +5,7 @@ import {
   StepConfigProvider,
   StepHandlerKey,
   StepProvider,
-} from "./steps.providers";
+} from "./step.providers";
 
 @Module({})
 export class StepsModule {
