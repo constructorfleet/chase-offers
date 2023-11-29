@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { Equals, IsOptional, IsString } from "class-validator";
-import { MapUniqueKeys } from "class-validator-extended";
+import { Equals, IsOptional } from "class-validator";
 import { VariableActionConfig } from "./action.config";
 
 export const TextAction = "text" as const;
@@ -11,8 +10,10 @@ export class TextActionConfig extends VariableActionConfig<TextAction> {
   @Equals(TextAction)
   type: TextAction;
 
-  @IsString()
   @IsOptional()
-  @MapUniqueKeys<string>((key) => key)
   regexCaptureGroups?: Map<string, string>;
+
+  @IsOptional()
+  // @Matches(VariablePathPattern, { each: true })
+  templateReplacers: Map<string, string> = undefined;
 }

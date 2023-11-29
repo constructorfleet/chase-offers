@@ -22,8 +22,6 @@ export const WebDriverFactoryProvider: FactoryProvider = {
   useFactory:
     (appConfig: AppConfig): WebDriverFactory =>
     async (userConfig: UserConfig): Promise<WebDriver> => {
-      console.dir(userConfig);
-      ///Users/tglenn/.webdriver
       return new Builder()
         .forBrowser("chrome")
         .setChromeOptions(

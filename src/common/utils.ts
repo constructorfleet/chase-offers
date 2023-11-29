@@ -52,3 +52,15 @@ export const setVariable = (
   variableMap: VariableMap
 ): VariableMap =>
   setNestedProperty(variableMap, variablePath.split("."), value);
+
+export const replaceTemplatedString = (
+  templatedString: string,
+  variableMap: VariableMap,
+  templateReplacers: Map<string, string> = undefined
+): string => {
+  return Object.entries(templateReplacers ?? {}).reduce(
+    (result, [replacer, variableName]) =>
+      result.replace(replacer, variableMap[variableName].toString()),
+    templatedString
+  );
+};

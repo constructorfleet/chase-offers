@@ -43,7 +43,6 @@ export class AppService {
   }
 
   async authenticate() {
-    console.log("Authenticating...");
     await selectors.preAuth.signInButton.exec(this.driver);
     await this.enterCredentials();
   }
@@ -80,7 +79,6 @@ export class AppService {
   }
 
   async processCards(): Promise<Record<string, OfferDetails[]>> {
-    console.log("Waiting for card dropdown selector...");
     const newOffers: Record<string, OfferDetails[]> = {};
     let cardCount = 0;
     let cardIndex = 0;
@@ -104,47 +102,13 @@ export class AppService {
   }
 
   async navigateToOffers() {
-    console.log("Waiting for offers button...");
     await selectors.account.offers.exec(this.driver);
   }
   async run() {
     while (await this.users.next()) {
-      console.dir(await this.users.handle());
-      return;
+      console.dir(await this.users.handle(), { depth: 10 });
     }
   }
-  // async run2() {
-  //   // const providers = await this.discover.providers((provider) => {
-  //   //   this.logger.log(
-  //   //     provider.name,
-  //   //     provider.dependencyType,
-  //   //     provider.injectType
-  //   //   );
-  //   //   return provider.instance instanceof StepConfig;
-  //   // });
-  //   // this.logger.log(`Found ${providers.length} StepConfigs`);
-  //   // providers.forEach(({ name, instance, injectType, dependencyType }) =>
-  //   //   this.logger.log(`${name} ${dependencyType.name} ${instance}`)
-  //   // );
-  //   const chromeOptions = new Options();
-  //   chromeOptions.addArguments("--no-sandbox");
-  //   chromeOptions.addArguments("--user-data-dir=/Users/tglenn/.webdriver");
-  //   chromeOptions.addArguments(`--profile-directory=${this.appConfig.userId}`);
-  //   try {
-  //     this.driver = await new Builder()
-  //       .forBrowser("chrome")
-  //       .setChromeOptions(chromeOptions)
-  //       .build();
-  //     console.log("Running...");
-  //     // await this.driver.navigate().to("https://chase.com");
-  //     // await this.authenticate();
-  //     // await this.navigateToOffers();
-  //     // const newOffers = await this.processCards();
-  //     // console.dir(newOffers, { depth: 5 });
-  //   } finally {
-  //     await this.driver.close();
-  //   }
-  // }
 
   async safeFindElement(selector: string): Promise<WebElement | null> {
     try {

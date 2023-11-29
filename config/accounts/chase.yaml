@@ -20,7 +20,7 @@ steps:
     selector:
       cssSelector: input[name='password']
       iFrameSelector: iFrame#logonbox
-      actions: 
+      actions:
         - type: sendKeys
           send: password
   - name: Sign-in
@@ -38,13 +38,13 @@ steps:
   - name: Open card dropdown
     selector:
       cssSelector: "#select-credit-card-account"
-      actions:  
+      actions:
         - type: click
   - name: Iterate over cards
     type: forEach
     selector:
       cssSelector: "#select-credit-card-account > mds-select-option"
-      actions:  
+      actions:
         - type: count
           variableName: cardCount
     indexVariable: cardIndex
@@ -55,16 +55,57 @@ steps:
           cssSelector: "#select-credit-card-account > mds-select-option:nth-child({index})"
           templateReplacers:
             "{index}": cardIndex
-          actions: 
+          actions:
+            - type: text
+              regexCaptureGroups:
+                name: "^[^,]+"
+              storeUnder: "cards.{cardIndex}"
+              templateReplacers:
+                "{cardIndex}": cardIndex
+              variableName: card
             - type: click
       - name: Activate new offers
         selector:
           cssSelector: mds-icon[type='ico_add_circle']
           isOptional: true
-          actions: 
+          actions:
             - type: click
         indexVariable: offerIndex
         whileFound:
+          - name: Get offer details
+            selector:
+              cssSelector: div[data-testid='offerAmount']
+              actions:
+                - type: text
+                  regexCaptureGroups:
+                    amount: "\\d+"
+                    unit: "[%\\$]"
+                    type: "[a-zA-Z].+$"
+                  storeUnder: "cards.{cardIndex}.card.offers.{offerIndex}"
+                  templateReplacers:
+                    "{cardIndex}": cardIndex
+                    "{offerIndex}": offerIndex
+                  variableName: offer
+          - name: Get offer store
+            selector:
+              cssSelector: "#content > div > div:nth-child(3) > div > div:nth-child(2) > div > div > div:nth-child(2) > h2"
+              actions:
+                - type: text
+                  storeUnder: "cards.{cardIndex}.card.offers.{offerIndex}"
+                  templateReplacers:
+                    "{cardIndex}": cardIndex
+                    "{offerIndex}": offerIndex
+                  variableName: store
+          - name: Get offer expiration
+            selector:
+              cssSelector: "#content > div > div:nth-child(3) > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(2) > div > div:nth-child(2) > div > div >div > div:nth-child(2) > span"
+              actions:
+                - type: text
+                  storeUnder: "cards.{cardIndex}.card.offers.{offerIndex}"
+                  templateReplacers:
+                    "{cardIndex}": cardIndex
+                    "{offerIndex}": offerIndex
+                  variableName: expires
           - name: Return to offers
             selector:
               cssSelector: "#mds-secondary-back-navbar"
@@ -74,6 +115,5 @@ steps:
       - name: Open card dropdown
         selector:
           cssSelector: "#select-credit-card-account"
-          actions:  
+          actions:
             - type: click
-      

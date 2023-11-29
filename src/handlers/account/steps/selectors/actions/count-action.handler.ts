@@ -1,6 +1,6 @@
 import { Logger } from "@nestjs/common";
 import { WebElement } from "selenium-webdriver";
-import { VariableMap, setVariable } from "src/common";
+import { VariableMap, replaceTemplatedString, setVariable } from "src/common";
 import { CountActionConfig } from "src/config";
 import { ActionHandler } from "./action.handler";
 import { RegisterAction } from "./action.providers";
@@ -16,9 +16,14 @@ export class CountActionHandler extends ActionHandler<
     super(config);
   }
 
-  private getVariablePath(): string[] {
+  private getVariablePath(variableMap: VariableMap): string[] {
     if (this.config.storeUnder) {
-      return [...this.config.storeUnder.split("."), this.config.variableName];
+      const storeUnder = replaceTemplatedString(
+        this.config.storeUnder,
+        variableMap,
+        this.config.templateReplacers
+      );
+      return [...storeUnder.split("."), this.config.variableName];
     }
     return [this.config.variableName];
   }
@@ -29,7 +34,7 @@ export class CountActionHandler extends ActionHandler<
   ): Promise<VariableMap> {
     this.logger.log(`Getting element count of ${element}`);
     return setVariable(
-      this.getVariablePath().join("."),
+      this.getVariablePath(variableMap).join("."),
       element.length,
       variableMap
     );

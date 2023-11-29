@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, Matches } from "class-validator";
-import { VariablePathPattern } from "src/common";
+import { VariablePathPattern, VariableSegmentPattern } from "src/common";
 import { Actions, VariableActions } from "./index";
 
 export abstract class ActionConfig<Action extends Actions> {
@@ -12,6 +12,7 @@ export abstract class VariableActionConfig<
 > extends ActionConfig<Action> {
   @IsString()
   @IsNotEmpty()
+  @Matches(VariableSegmentPattern)
   variableName: string;
 
   @IsString()

@@ -1,6 +1,7 @@
 import { Logger } from "@nestjs/common";
 import { By, WebDriver, WebElement, until } from "selenium-webdriver";
 import { ShadowRootPromise } from "selenium-webdriver/lib/webdriver";
+import { replaceTemplatedString } from "src/common";
 import { VariableMap } from "src/common/types";
 import {
   ActionConfigs,
@@ -77,24 +78,6 @@ export class SelectorHandler {
     }
   }
 
-  private replaceTemplatedString(
-    templatedString: string,
-    variableMap: VariableMap
-  ): string {
-    this.logger.debug(`Templated String: ${templatedString}`);
-    return Object.entries(this.templateReplacers ?? {}).reduce(
-      (result, [replacer, variableName]) => {
-        this.logger.debug(
-          `Replaceing ${replacer} with ${variableMap[variableName]}`
-        );
-        result = result.replace(replacer, variableMap[variableName].toString());
-        this.logger.debug(`Result ${result}`);
-        return result;
-      },
-      templatedString
-    );
-  }
-
   private async switchFrame(driver: WebDriver, timeout: number) {
     this.logger.debug(`Switching to frame ${this.iFrameSelector}...`);
     if (this.iFrameSelector !== "default") {
@@ -112,7 +95,11 @@ export class SelectorHandler {
     variableMap: VariableMap,
     timeout: number
   ): Promise<WebElement[]> {
-    const selector = this.replaceTemplatedString(this.cssSelector, variableMap);
+    const selector = replaceTemplatedString(
+      this.cssSelector,
+      variableMap,
+      this.templateReplacers
+    );
     this.logger.debug(
       `Locating ${this.select} using css selector '${selector}...`
     );
@@ -141,7 +128,11 @@ export class SelectorHandler {
     cssSelector: string,
     variableMap: VariableMap
   ): Promise<WebElement[]> {
-    const selector = this.replaceTemplatedString(cssSelector, variableMap);
+    const selector = replaceTemplatedString(
+      cssSelector,
+      variableMap,
+      this.templateReplacers
+    );
     return await (await shadowRoot).findElements(By.css(selector));
   }
 }
